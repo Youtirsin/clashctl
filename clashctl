@@ -1,0 +1,216 @@
+#!/bin/bash
+
+# --------------- confit start -----------------------
+# clash path
+clash_path="/home/youtirsin/clash"
+
+# clash config path
+config="/home/youtirsin/clash/config"
+
+proxy_endpoint="127.0.0.1:7890"
+
+update_temp_file="new_config.yaml"
+
+controller_url="localhost:9090"
+# --------------- confit end -------------------------
+
+
+validate_config() {
+  if [[ -z $clash_path ]]
+  then
+    echo "clash_path config not set."
+    return 1
+  fi
+
+  if [[ -z $config ]]
+  then
+    echo "config file path config not set."
+    return 1
+  fi
+
+  if [[ -z $proxy_endpoint ]]
+  then
+    echo "proxy endpoint config not set."
+    return 1
+  fi
+
+  if [[ -z $update_temp_file ]]
+  then
+    echo "update_temp_file config not set."
+    return 1
+  fi
+
+  if [[ -z $controller_url ]]
+  then
+    echo "external controller url config not set."
+    return 1
+  fi
+
+  return 0
+}
+
+
+find_clash() {
+  clash=$(find $clash_path -name clash-*)
+  if [[ -z $clash ]]
+  then
+    echo "no clash executable found."
+    echo "executable name be like: clash-[os]-[arch]-[version]"
+    return 1
+  fi
+  return 0
+}
+
+
+show_usage() {
+  echo "Usage:"
+  echo "bash ${BASH_SOURCE} [option] <param>"
+  echo "Options:"
+  echo "start                         start clash"
+  echo "stop                          stop clash"
+  echo "reload                        reload clash"
+  echo "update <url>                  download config from <url> and reload clash"
+  echo "proxies                       show proxy information"
+  echo "switch [<selector>] <proxy>   switch proxy to <proxy> in <selector>, default selector is Proxies"
+}
+
+
+start() {
+  echo "starting http(s) proxy at $proxy_endpoint"
+  export http_proxy=$proxy_endpoint
+  export https_proxy=$proxy_endpoint
+
+  echo "using clash $clash"
+  nohup $clash -d $config &
+
+  sleep 2
+  curl -s --connect-timeout 2 google.com > /dev/null
+  if [[ $? != 0 ]]
+  then
+    echo "failed to start clash. :("
+    stop
+  else
+    echo -e "clash started. :)"
+  fi
+}
+
+
+stop() {
+  pkill -2 clash
+  echo "stopped clash."
+
+  unset http_proxy
+  unset https_proxy
+  echo "stopped http(s) proxy."
+}
+
+
+reload() {
+  stop
+  sleep 2
+  start
+}
+
+
+update() {
+  echo "backing up the old config file."
+  cp $config/config.yaml $config/config.yaml.backup
+
+  echo "fetching configuration from \""$1"\""
+  wget $1 -O $update_temp_file
+  if [[ $? != 0 ]]
+  then
+    echo "failed to fetch configuration file."
+    return
+  fi
+  mv $update_temp_file $config/config.yaml
+
+  reload
+}
+
+
+show_proxies() {
+  curl $controller_url/proxies/$1
+}
+
+
+switch_proxy() {
+  curl -X PUT --data "{\"name\": \"$2\"}" $controller_url/proxies/$1
+  echo "switched proxy to \"$2\" in \"$1\"."
+}
+
+
+main() {
+  validate_config
+  if [[ $? == 1 ]]
+  then
+    return
+  fi
+
+  find_clash
+  if [[ $? == 1 ]]
+  then
+    return
+  fi
+
+  if [[ $# == 0 ]]
+  then
+    show_usage
+  fi
+
+  if [[ $1 == "start" ]]
+  then
+    echo "starting..."
+    start
+
+  elif [[ $1 == "stop" ]]
+  then
+    echo "stopping..."
+    stop
+
+  elif [[ $1 == "reload" ]]
+  then
+    echo "reloading..."
+    reload
+
+  elif [[ $1 == "update" ]]
+  then
+    echo "updating..."
+    if [[ $# -lt 2 ]]
+    then
+      echo "required <url> is missing."
+      return
+    fi
+    update $2
+
+  elif [[ $1 == "proxies" ]]
+  then
+    if [[ $# -lt 2 ]]
+    then
+      show_proxies Proxies
+    else
+      show_proxies $2
+    fi
+
+  elif [[ $1 == "switch" ]]
+  then
+    if [[ $# -lt 2 ]]
+    then
+      show_usage
+      return
+    fi
+
+    if [[ $# -lt 3 ]]
+    then
+      switch_proxy Proxies $2
+    else
+      show_proxies $2 $3
+    fi
+  
+  else
+    show_usage
+  fi
+}
+
+
+main $*
