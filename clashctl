@@ -76,6 +76,8 @@ show_usage() {
 
 
 start() {
+  echo "stopping potential clash running behind"
+  stop
   echo "starting http(s) proxy at $proxy_endpoint"
   export http_proxy=$proxy_endpoint
   export https_proxy=$proxy_endpoint
