@@ -11,6 +11,8 @@ proxy_endpoint="127.0.0.1:7890"
 
 update_temp_file="/home/youtirsin/clash/clash_new_config.yaml"
 
+nohup_out=$clash_path"/clash.out"
+
 controller_url="localhost:9090"
 # --------------- confit end -------------------------
 
@@ -83,7 +85,7 @@ start() {
   export https_proxy=$proxy_endpoint
 
   echo "using clash $clash"
-  nohup $clash -d $config &
+  nohup $clash -d $config > $nohup_out 2>&1 &
 
   sleep 2
   curl -s --connect-timeout 2 google.com > /dev/null
@@ -104,6 +106,9 @@ stop() {
   unset http_proxy
   unset https_proxy
   echo "stopped http(s) proxy."
+
+  echo "remove previous log file."
+  rm $nohup_out
 }
 
 
