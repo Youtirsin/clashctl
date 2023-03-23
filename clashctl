@@ -2,7 +2,7 @@
 
 # --------------- confit start -----------------------
 # clash path
-clash_path="/home/youtirsin/clash"
+clash_path="/home/youtirsin/clashctl"
 
 # clash config path
 config=$clash_path"/config"
