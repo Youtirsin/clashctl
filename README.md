@@ -7,7 +7,7 @@ a cli tool for clash
 ``` bash
 # setup
 mkdir clash && cd clash
-git clong https://github.com/Youtirsin/clashctl.git
+git clone https://github.com/Youtirsin/clashctl.git
 . ./clashctl update <your-url>
 
 # help
