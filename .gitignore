@@ -1,0 +1,3 @@
+./config/*.yaml
+./config/*.yaml.backup
+./config/cache.db

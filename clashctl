@@ -78,6 +78,7 @@ show_usage() {
   echo "update <url>                  download config from <url> and reload clash"
   echo "proxies                       show proxy information"
   echo "switch [<selector>] <proxy>   switch proxy to <proxy> in <selector>, default selector is Proxies"
+  echo "help                          show usage"
 }
 
 
@@ -217,7 +218,7 @@ main() {
     else
       show_proxies $2 $3
     fi
-  
+
   else
     show_usage
   fi
