@@ -17,34 +17,38 @@ controller_url="localhost:9090"
 # --------------- confit end -------------------------
 
 
+icon_error="😅"
+icon_success="😎"
+
+
 validate_config() {
   if [[ -z $clash_path ]]
   then
-    echo "clash_path config not set."
+    echo "[validate_config] clash_path config not set."$icon_error
     return 1
   fi
 
   if [[ -z $config ]]
   then
-    echo "config file path config not set."
+    echo "[validate_config] config file path config not set."$icon_error
     return 1
   fi
 
   if [[ -z $proxy_endpoint ]]
   then
-    echo "proxy endpoint config not set."
+    echo "[validate_config] proxy endpoint config not set."$icon_error
     return 1
   fi
 
   if [[ -z $update_temp_file ]]
   then
-    echo "update_temp_file config not set."
+    echo "[validate_config] update_temp_file config not set."$icon_error
     return 1
   fi
 
   if [[ -z $controller_url ]]
   then
-    echo "external controller url config not set."
+    echo "[validate_config] external controller url config not set."$icon_error
     return 1
   fi
 
@@ -56,8 +60,8 @@ find_clash() {
   clash=$(find $clash_path -name "clash-*")
   if [[ -z $clash ]]
   then
-    echo "no clash executable found."
-    echo "executable name be like: clash-[os]-[arch]-[version]"
+    echo "[find_clash] no clash executable found."$icon_error
+    echo "[find_clash] executable name be like: clash-[os]-[arch]-[version]"
     return 1
   fi
   return 0
@@ -78,36 +82,36 @@ show_usage() {
 
 
 start() {
-  echo "stopping potential clash running behind"
+  echo "[start] stopping potential clash running behind"
   stop
-  echo "starting http(s) proxy at $proxy_endpoint"
+  echo "[start] starting http(s) proxy at $proxy_endpoint"
   export http_proxy=$proxy_endpoint
   export https_proxy=$proxy_endpoint
 
-  echo "using clash $clash"
+  echo "[start] using clash $clash"
   nohup $clash -d $config > $nohup_out 2>&1 &
 
   sleep 2
   curl -s --connect-timeout 2 google.com > /dev/null
   if [[ $? != 0 ]]
   then
-    echo "failed to start clash. :("
+    echo "[start] failed to start clash."$icon_error
     stop
   else
-    echo -e "clash started. :)"
+    echo -e "[start] clash started."$icon_success
   fi
 }
 
 
 stop() {
   pkill -2 clash
-  echo "stopped clash."
+  echo "[stop] stopped clash."
 
   unset http_proxy
   unset https_proxy
-  echo "stopped http(s) proxy."
+  echo "[stop] stopped http(s) proxy."
 
-  echo "remove previous log file."
+  echo "[stop] remove previous log file."
   rm $nohup_out
 }
 
@@ -120,14 +124,14 @@ reload() {
 
 
 update() {
-  echo "backing up the old config file."
+  echo "[update] backing up the old config file."
   cp $config/config.yaml $config/config.yaml.backup
 
-  echo "fetching configuration from \""$1"\""
+  echo "[update] fetching configuration from \""$1"\""
   wget $1 -O $update_temp_file
   if [[ $? != 0 ]]
   then
-    echo "failed to fetch configuration file."
+    echo "[update] failed to fetch configuration file."$icon_error
     return
   fi
   mv $update_temp_file $config/config.yaml
@@ -143,7 +147,7 @@ show_proxies() {
 
 switch_proxy() {
   curl -X PUT --data "{\"name\": \"$2\"}" $controller_url/proxies/$1
-  echo "switched proxy to \"$2\" in \"$1\"."
+  echo "[switch_proxy] switched proxy to \"$2\" in \"$1\"."$icon_success
 }
 
 
@@ -167,25 +171,25 @@ main() {
 
   if [[ $1 == "start" ]]
   then
-    echo "starting..."
+    echo "[main] starting..."
     start
 
   elif [[ $1 == "stop" ]]
   then
-    echo "stopping..."
+    echo "[main] stopping..."
     stop
 
   elif [[ $1 == "reload" ]]
   then
-    echo "reloading..."
+    echo "[main] reloading..."
     reload
 
   elif [[ $1 == "update" ]]
   then
-    echo "updating..."
+    echo "[main] updating..."
     if [[ $# -lt 2 ]]
     then
-      echo "required <url> is missing."
+      echo "[main] required <url> is missing."
       return
     fi
     update $2
