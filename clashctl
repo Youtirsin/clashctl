@@ -84,6 +84,7 @@ show_usage() {
 
 start() {
   echo "[start] stopping potential clash running behind"
+  rmLog
   stop
   echo "[start] starting http(s) proxy at $proxy_endpoint"
   export http_proxy=$proxy_endpoint
@@ -111,13 +112,17 @@ stop() {
   unset http_proxy
   unset https_proxy
   echo "[stop] stopped http(s) proxy."
+}
 
-  echo "[stop] remove previous log file."
+
+rmLog() {
+  echo "[stop] remove log file."
   rm $nohup_out
 }
 
 
 reload() {
+  rmLog
   stop
   sleep 2
   start
