@@ -17,38 +17,38 @@ controller_url="localhost:9090"
 # --------------- confit end -------------------------
 
 
-icon_error="😅"
-icon_success="😎"
+icon_error="🤣👉"
+icon_success="😎👍"
 
 
 validate_config() {
   if [[ -z $clash_path ]]
   then
-    echo "[validate_config] clash_path config not set."$icon_error
+    echo "[validate_config] $icon_error clash_path config not set."
     return 1
   fi
 
   if [[ -z $config ]]
   then
-    echo "[validate_config] config file path config not set."$icon_error
+    echo "[validate_config] $icon_error config file path config not set."
     return 1
   fi
 
   if [[ -z $proxy_endpoint ]]
   then
-    echo "[validate_config] proxy endpoint config not set."$icon_error
+    echo "[validate_config] $icon_error proxy endpoint config not set."
     return 1
   fi
 
   if [[ -z $update_temp_file ]]
   then
-    echo "[validate_config] update_temp_file config not set."$icon_error
+    echo "[validate_config] $icon_error update_temp_file config not set."
     return 1
   fi
 
   if [[ -z $controller_url ]]
   then
-    echo "[validate_config] external controller url config not set."$icon_error
+    echo "[validate_config] $icon_error external controller url config not set."
     return 1
   fi
 
@@ -60,8 +60,8 @@ find_clash() {
   clash=$(find $clash_path -name "clash-*")
   if [[ -z $clash ]]
   then
-    echo "[find_clash] no clash executable found."$icon_error
-    echo "[find_clash] executable name be like: clash-[os]-[arch]-[version]"
+    echo "[find_clash] $icon_error no clash executable found."
+    echo "[find_clash] $icon_error executable name be like: clash-[os]-[arch]-[version]"
     return 1
   fi
   return 0
@@ -97,10 +97,10 @@ start() {
   curl -s --connect-timeout 2 google.com > /dev/null
   if [[ $? != 0 ]]
   then
-    echo "[start] failed to start clash."$icon_error
+    echo "[start] $icon_error failed to start clash."
     stop
   else
-    echo -e "[start] clash started."$icon_success
+    echo -e "[start] $icon_success clash started."
   fi
 }
 
@@ -137,7 +137,7 @@ update() {
   wget $1 -O $update_temp_file
   if [[ $? != 0 ]]
   then
-    echo "[update] failed to fetch configuration file."$icon_error
+    echo "[update] $icon_error failed to fetch configuration file."
     return
   fi
   mv $update_temp_file $config/config.yaml
@@ -153,7 +153,7 @@ show_proxies() {
 
 switch_proxy() {
   curl -X PUT --data "{\"name\": \"$2\"}" $controller_url/proxies/$1
-  echo "[switch_proxy] switched proxy to \"$2\" in \"$1\"."$icon_success
+  echo "[switch_proxy] $icon_success switched proxy to \"$2\" in \"$1\"."
 }
 
 
