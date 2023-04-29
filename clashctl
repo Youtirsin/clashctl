@@ -70,14 +70,14 @@ find_clash() {
 
 show_usage() {
   echo "Usage:"
-  echo "bash ${BASH_SOURCE} [option] <param>"
+  echo "bash ${BASH_SOURCE} <option> [param]..."
   echo "Options:"
   echo "start                         start clash"
   echo "stop                          stop clash"
   echo "reload                        reload clash"
   echo "update <url>                  download config from <url> and reload clash"
   echo "proxies                       show proxy information"
-  echo "switch [<selector>] <proxy>   switch proxy to <proxy> in <selector>, default selector is Proxies"
+  echo "switch <proxy> [selector]     switch proxy to <proxy> in [selector], default selector is Proxies"
   echo "help                          show usage"
 }
 
