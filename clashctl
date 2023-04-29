@@ -11,7 +11,7 @@ proxy_endpoint="127.0.0.1:7890"
 
 update_temp_file=$clash_path"/clash_new_config.yaml"
 
-nohup_out=$clash_path"/clash.out"
+nohup_out=$clash_path"/clash.log"
 
 controller_url="localhost:9090"
 # --------------- confit end -------------------------
