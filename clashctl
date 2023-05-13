@@ -2,7 +2,7 @@
 
 # --------------- confit start -----------------------
 # clash path
-clash_path="/home/youtirsin/clashctl"
+clash_path="$(cd "$(dirname "$0")" && pwd)"
 
 # clash config path
 config=$clash_path"/config"
@@ -134,7 +134,7 @@ update() {
   cp $config/config.yaml $config/config.yaml.backup
 
   echo "[update] fetching configuration from \""$1"\""
-  wget $1 -O $update_temp_file
+  wget -L -O $update_temp_file $1
   if [[ $? != 0 ]]
   then
     echo "[update] $icon_error failed to fetch configuration file."

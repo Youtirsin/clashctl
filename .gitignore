@@ -1,3 +1,3 @@
-./config/*.yaml
-./config/*.yaml.backup
-./config/cache.db
+clash.log
+config/cache.db
+config/config.yaml

@@ -5,27 +5,19 @@ a cli tool for clash
 ## usage
 
 ``` bash
+# clone to /some/path/
 git clone https://github.com/Youtirsin/clashctl.git
-# if not working, one possible reason is this.
-cd clashctl
-chmod 777 clash-linux-amd64
+
+# 1. copy your config.yaml to config/config.yaml
+# or update with url
+. ~/some/path/clashctl/clasctl update <your-url>
+
+# to get help, run with no args or 'help'
+. ~/some/path/clashctl/clashctl [help]
 ```
 
+## issue
 ``` bash
-# edit clashctl with your favorite editor
-# set clash_path in ./clashctl to the clashctl directory path
-clash_path="/home/youtirsin/clashctl"
+# one possible reason for it not working
+chmod 777 clash-core
 ```
-
-``` bash
-# run anywhere
-# update
-. <path-to>/clashctl/clashctl update <your-url>
-# . ~/clashctl/clashctl update <your-url>
-
-# help
-. <path-to>/clashctl/clasctl help
-# . ~/clashctl/clashctl help
-
-```
-
