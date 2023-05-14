@@ -16,7 +16,6 @@ nohup_out=$clash_path"/clash.log"
 controller_url="localhost:9090"
 # --------------- confit end -------------------------
 
-
 icon_error="🤣👉"
 icon_success="😎👍"
 
@@ -24,31 +23,31 @@ icon_success="😎👍"
 validate_config() {
   if [[ -z $clash_path ]]
   then
-    echo "[validate_config] $icon_error clash_path config not set."
+    echo "[ERROR] $icon_error clash_path config not set."
     return 1
   fi
 
   if [[ -z $config ]]
   then
-    echo "[validate_config] $icon_error config file path config not set."
+    echo "[ERROR] $icon_error config file path config not set."
     return 1
   fi
 
   if [[ -z $proxy_endpoint ]]
   then
-    echo "[validate_config] $icon_error proxy endpoint config not set."
+    echo "[ERROR] $icon_error proxy endpoint config not set."
     return 1
   fi
 
   if [[ -z $update_temp_file ]]
   then
-    echo "[validate_config] $icon_error update_temp_file config not set."
+    echo "[ERROR] $icon_error update_temp_file config not set."
     return 1
   fi
 
   if [[ -z $controller_url ]]
   then
-    echo "[validate_config] $icon_error external controller url config not set."
+    echo "[ERROR] $icon_error external controller url config not set."
     return 1
   fi
 
@@ -60,8 +59,8 @@ find_clash() {
   clash=$(find $clash_path -name "clash-*")
   if [[ -z $clash ]]
   then
-    echo "[find_clash] $icon_error no clash executable found."
-    echo "[find_clash] $icon_error executable name be like: clash-[os]-[arch]-[version]"
+    echo "[ERROR] $icon_error no clash executable found."
+    echo "[ERROR] $icon_error executable name be like: clash-[os]-[arch]-[version]"
     return 1
   fi
   return 0
@@ -83,40 +82,40 @@ show_usage() {
 
 
 start() {
-  echo "[start] stopping potential clash running behind"
+  echo "[INFO] stopping potential clash running behind"
   rmLog
   stop
-  echo "[start] starting http(s) proxy at $proxy_endpoint"
+  echo "[INFO] starting http(s) proxy at $proxy_endpoint"
   export http_proxy=$proxy_endpoint
   export https_proxy=$proxy_endpoint
 
-  echo "[start] using clash $clash"
+  echo "[INFO] using clash $clash"
   nohup $clash -d $config > $nohup_out 2>&1 &
 
   sleep 2
   curl -s --connect-timeout 2 google.com > /dev/null
   if [[ $? != 0 ]]
   then
-    echo "[start] $icon_error failed to start clash."
+    echo "[ERROR] $icon_error failed to start clash."
     stop
   else
-    echo -e "[start] $icon_success clash started."
+    echo -e "[INFO] $icon_success clash started."
   fi
 }
 
 
 stop() {
   pkill -2 clash
-  echo "[stop] stopped clash."
+  echo "[INFO] stopped clash."
 
   unset http_proxy
   unset https_proxy
-  echo "[stop] stopped http(s) proxy."
+  echo "[INFO] stopped http(s) proxy."
 }
 
 
 rmLog() {
-  echo "[stop] remove log file."
+  echo "[INFO] remove log file."
   rm $nohup_out
 }
 
@@ -130,14 +129,14 @@ reload() {
 
 
 update() {
-  echo "[update] backing up the old config file."
+  echo "[INFO] backing up the old config file."
   cp $config/config.yaml $config/config.yaml.backup
 
-  echo "[update] fetching configuration from \""$1"\""
+  echo "[INFO] fetching configuration from \""$1"\""
   wget -L -O $update_temp_file $1
   if [[ $? != 0 ]]
   then
-    echo "[update] $icon_error failed to fetch configuration file."
+    echo "[ERROR] $icon_error failed to fetch configuration file."
     return
   fi
   mv $update_temp_file $config/config.yaml
@@ -153,7 +152,7 @@ show_proxies() {
 
 switch_proxy() {
   curl -X PUT --data "{\"name\": \"$2\"}" $controller_url/proxies/$1
-  echo "[switch_proxy] $icon_success switched proxy to \"$2\" in \"$1\"."
+  echo "[INFO] $icon_success switched proxy to \"$2\" in \"$1\"."
 }
 
 
@@ -177,25 +176,25 @@ main() {
 
   if [[ $1 == "start" ]]
   then
-    echo "[main] starting..."
+    echo "[INFO] starting..."
     start
 
   elif [[ $1 == "stop" ]]
   then
-    echo "[main] stopping..."
+    echo "[INFO] stopping..."
     stop
 
   elif [[ $1 == "reload" ]]
   then
-    echo "[main] reloading..."
+    echo "[INFO] reloading..."
     reload
 
   elif [[ $1 == "update" ]]
   then
-    echo "[main] updating..."
+    echo "[INFO] updating..."
     if [[ $# -lt 2 ]]
     then
-      echo "[main] required <url> is missing."
+      echo "[ERROR] required <url> is missing."
       return
     fi
     update $2
