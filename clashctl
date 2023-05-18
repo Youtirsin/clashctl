@@ -69,7 +69,7 @@ find_clash() {
 
 show_usage() {
   echo "Usage:"
-  echo "bash ${BASH_SOURCE} <option> [param]..."
+  echo ". ${BASH_SOURCE} <option> [param]..."
   echo "Options:"
   echo "start                         start clash"
   echo "stop                          stop clash"
