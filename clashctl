@@ -1,8 +1,11 @@
 #!/bin/bash
 
-# --------------- confit start -----------------------
-# clash path
-clash_path="$(cd "$(dirname "$0")" && pwd)"
+# --------------- config start -----------------------
+if [ -n "$BASH" ]; then
+  clash_path=$(cd `dirname ${BASH_SOURCE[0]}`;pwd)
+else
+  clash_path=$(cd `dirname ${(%):-%x}`;pwd)
+fi
 
 # clash config path
 config=$clash_path"/config"
@@ -14,7 +17,7 @@ update_temp_file=$clash_path"/clash_new_config.yaml"
 nohup_out=$clash_path"/clash.log"
 
 controller_url="localhost:9090"
-# --------------- confit end -------------------------
+# --------------- config end -------------------------
 
 icon_error="🤣👉"
 icon_success="😎👍"
