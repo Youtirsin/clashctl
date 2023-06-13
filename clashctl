@@ -212,6 +212,7 @@ main() {
   then
     echo "[INFO] setting proxy..."
     set_
+    ping
 
   elif [[ $1 == "unset" ]]
   then
