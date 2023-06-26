@@ -1,0 +1,5 @@
+#!/bin/bash
+
+unset http_proxy
+unset https_proxy
+echo "[INFO] stopped http(s) proxy."

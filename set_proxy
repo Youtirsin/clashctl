@@ -1,0 +1,7 @@
+#!/bin/bash
+
+proxy_endpoint="127.0.0.1:7890"
+
+echo "[INFO] starting http(s) proxy at $proxy_endpoint"
+export http_proxy=$proxy_endpoint
+export https_proxy=$proxy_endpoint

@@ -72,13 +72,14 @@ find_clash() {
 
 show_usage() {
   echo "Usage:"
-  echo ". ${BASH_SOURCE} <option> [param]..."
+  echo "'. set_proxy' to set http(s)_proxy"
+  echo "'. unset_proxy' to unset http(s)_proxy"
+  echo "bash ${BASH_SOURCE} <option> [param]..."
+  echo "bash ${BASH_SOURCE} <option> [param]..."
   echo "Options:"
   echo "start                         start clash"
   echo "stop                          stop clash"
   echo "reload                        reload clash"
-  echo "set                           set proxy"
-  echo "unset                         unset proxy"
   echo "ping                          curl google.com"
   echo "update <url>                  download config from <url> and reload clash"
   echo "proxies                       show proxy information"
@@ -91,7 +92,6 @@ start() {
   echo "[INFO] stopping potential clash running behind"
   rmLog
   stop
-  set_
 
   echo "[INFO] using clash $clash"
   nohup $clash -d $config > $nohup_out 2>&1 &
@@ -104,7 +104,6 @@ start() {
 stop() {
   pkill -2 clash
   echo "[INFO] stopped clash."
-  unset_
 }
 
 
@@ -129,14 +128,8 @@ set_() {
 }
 
 
-unset_() {
-  unset http_proxy
-  unset https_proxy
-  echo "[INFO] stopped http(s) proxy."
-}
-
-
 ping() {
+  set_
   curl -s --connect-timeout 2 google.com > /dev/null
   if [[ $? != 0 ]]
   then
@@ -207,17 +200,6 @@ main() {
   then
     echo "[INFO] reloading..."
     reload
-
-  elif [[ $1 == "set" ]]
-  then
-    echo "[INFO] setting proxy..."
-    set_
-    ping
-
-  elif [[ $1 == "unset" ]]
-  then
-    echo "[INFO] unsetting proxy..."
-    unset_
 
   elif [[ $1 == "ping" ]]
   then

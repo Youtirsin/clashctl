@@ -10,10 +10,14 @@ git clone https://github.com/Youtirsin/clashctl.git
 
 # 1. copy your config.yaml to config/config.yaml
 # or update with url
-. ~/some/path/clashctl/clasctl update <your-url>
+bash ~/some/path/clashctl/clasctl update <your-url>
 
 # to get help, run with no args or 'help'
-. ~/some/path/clashctl/clashctl [help]
+bash ~/some/path/clashctl/clashctl [help]
+
+# set and unset http(s)_proxy with shortcuts
+. ~/some/path/clashctl/set_proxy
+. ~/some/path/clashctl/unset_proxy
 ```
 
 ## issue
